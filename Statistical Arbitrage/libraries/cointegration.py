@@ -8,14 +8,10 @@ Sarmento and Nuno Horta in `"A Machine Learning based Pairs Trading Investment S
 from functools import reduce
 import numpy as np
 import pandas as pd
-
-from arbitragelab.cointegration_approach import EngleGrangerPortfolio, get_half_life_of_mean_reversion
-from arbitragelab.hedge_ratios import construct_spread
-from arbitragelab.hedge_ratios import get_ols_hedge_ratio, get_tls_hedge_ratio, get_minimum_hl_hedge_ratio, \
-    get_johansen_hedge_ratio, get_box_tiao_hedge_ratio
-from arbitragelab.hedge_ratios.adf_optimal import get_adf_optimal_hedge_ratio
-# from arbitragelab.spread_selection.base import AbstractPairsSelector
-from arbitragelab.cointegration_approach.utils import get_hurst_exponent
+from .engle_granger import EngleGrangerPortfolio
+from .hedge_ratios import construct_spread, get_hurst_exponent, get_half_life_of_mean_reversion
+from .hedge_ratios import get_ols_hedge_ratio, get_tls_hedge_ratio, get_minimum_hl_hedge_ratio, \
+    get_johansen_hedge_ratio, get_adf_optimal_hedge_ratio
 
 
 class CointegrationSpreadSelector():
@@ -93,9 +89,6 @@ class CointegrationSpreadSelector():
             elif hedge_ratio_calculation == 'johansen':
                 hedge_ratios, _, _, _ = get_johansen_hedge_ratio(price_data=self.prices_df[list(bundle)],
                                                                  dependent_variable=bundle[0])
-            elif hedge_ratio_calculation == 'box_tiao':
-                hedge_ratios, _, _, _ = get_box_tiao_hedge_ratio(price_data=self.prices_df[list(bundle)],
-                                                                 dependent_variable=bundle[0])
             else:
                 raise ValueError('Unknown hedge ratio calculation parameter value.')
 
@@ -103,8 +96,8 @@ class CointegrationSpreadSelector():
             self.hedge_ratio_information['_'.join(bundle)] = hedge_ratios
             spreads_dict['_'.join(bundle)] = spread
 
-            self._print_progress(iteration + 1, len(self.baskets_to_filter), prefix='Spread construction:',
-                                 suffix='Complete')
+            # self._print_progress(iteration + 1, len(self.baskets_to_filter), prefix='Spread construction:',
+            #                      suffix='Complete')
             iteration += 1
 
         return spreads_dict
@@ -138,8 +131,8 @@ class CointegrationSpreadSelector():
         for spread_ticker, spread in self.spreads_dict.items():
             spread.name = spread_ticker
             self.generate_spread_statistics(spread_series=spread, log_info=True)
-            self._print_progress(iteration + 1, len(self.spreads_dict), prefix='Statistics generation:',
-                                 suffix='Complete')
+            # self._print_progress(iteration + 1, len(self.spreads_dict), prefix='Statistics generation:',
+            #                      suffix='Complete')
             iteration += 1
 
         self.selection_logs['hedge_ratio'] = self.hedge_ratio_information.copy()
@@ -205,6 +198,8 @@ class CointegrationSpreadSelector():
 
         return statistics
 
+
+
     @staticmethod
     def _get_n_crossovers(spread_series: pd.Series) -> int:
         """
@@ -238,3 +233,5 @@ class CointegrationSpreadSelector():
 
         return {'coint_t': statistic_value, 'p_value_99%': p_value_99,
                 'p_value_95%': p_value_95, 'p_value_90%': p_value_90}
+
+
