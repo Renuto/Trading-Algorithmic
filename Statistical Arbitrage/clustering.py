@@ -77,6 +77,8 @@ class Clustering:
         self.feature_vector.columns = returns_df.columns
         self.feature_vector = self.feature_vector.T
 
+        return pca
+
     def plot_pca_matrix(self, alpha: float = 0.2, figsize: tuple = (15, 15)) -> list:
         """
         Plots the feature vector on a scatter matrix.
