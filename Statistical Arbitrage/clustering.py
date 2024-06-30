@@ -16,6 +16,8 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from matplotlib.axes._axes import Axes
 from matplotlib.figure import Figure
+import plotly.express as px
+import plotly.graph_objects as go
 
 # from arbitragelab.util.indexed_highlight import IndexedHighlight
 
@@ -180,52 +182,42 @@ class Clustering:
 
         return self.plot_3d_scatter_plot(tsne_fv, no_of_classes, method)
 
-    def plot_3d_scatter_plot(self, tsne_df: pd.DataFrame, no_of_classes: int,
-                             method: str = "") -> Axes:
+    def plot_3d_scatter_plot(self, tsne_df: pd.DataFrame, no_of_classes: int, method: str = "") -> go.Figure:
         """
-        Plots the clusters found on a 3d scatter plot. In this method it is
-        assumed that the data being plotted has been pre-processed using TSNE
-        constrained to three components to provide the best visualization of
-        dataset possible.
+        Plots the clusters found on a 3D scatter plot using Plotly.
 
         :param tsne_df: (pd.DataFrame) Data reduced using T-SNE.
         :param no_of_classes: (int) Number of unique clusters/classes.
         :param method: (str) String to be used as title in the plot.
-        :return: (Axes) Axes object.
+        :return: (go.Figure) Plotly Figure object.
         """
+        fig = go.Figure()
 
-        ax_object = plt.subplot(111, projection='3d')
-        paths_collection = []
-
-        # For each cluster.
-        for cluster in range(0, no_of_classes):
-            # Get specific cluster data from the tsne processed dataframe.
+        for cluster in range(no_of_classes):
             cluster_data = tsne_df[self.clust_labels_ == cluster]
+            fig.add_trace(go.Scatter3d(
+                x=cluster_data[0], y=cluster_data[1], z=cluster_data[2],
+                mode='markers',
+                marker=dict(size=5),
+                name=f'Cluster {cluster}'
+            ))
 
-            # Plot the cluster data by column index [0, 1, 2] -> [x, y, z].
-            paths = ax_object.plot(cluster_data.loc[:, 0], cluster_data.loc[:, 1],
-                                   cluster_data.loc[:, 2], alpha=0.7, marker='.',
-                                   linestyle='None', label=list(cluster_data.index),
-                                   markersize=30)
+        fig.add_trace(go.Scatter3d(
+            x=tsne_df[self.clust_labels_ == -1][0],
+            y=tsne_df[self.clust_labels_ == -1][1],
+            z=tsne_df[self.clust_labels_ == -1][2],
+            mode='markers',
+            marker=dict(size=5, color='black'),
+            name='Noise'
+        ))
 
-            # Stash the list of Line2D objects for future use.
-            paths_collection.append(paths)
+        fig.update_layout(title=f'Automatic Clustering\n{method}', scene=dict(
+            xaxis_title='Component 0',
+            yaxis_title='Component 1',
+            zaxis_title='Component 2'
+        ))
 
-        # Flatten the paths array and instantiate the IndexedHighlight class
-        # that will manage the selection and highlighting of the plotted
-        # clusters.
-        # IndexedHighlight(np.ravel(paths_collection),
-        #                  formatter='{label}'.format)
-
-        # Plot the noisy samples which are not included in a leaf cluster labelled as -1,
-        # by column index [0, 1, 2] -> [x, y, z].
-        ax_object.plot(tsne_df.iloc[self.clust_labels_ == -1, 0], tsne_df.iloc[self.clust_labels_ == -1, 1],
-                       tsne_df.iloc[self.clust_labels_ == -1, 2], 'k+', alpha=0.1)
-
-        # Set the chart title.
-        ax_object.set_title('Automatic Clustering\n' + method)
-
-        return ax_object
+        return fig
 
     def plot_2d_scatter_plot(self, fig: Figure, tsne_df: pd.DataFrame, no_of_classes: int,
                              method: str = "") -> Axes:
