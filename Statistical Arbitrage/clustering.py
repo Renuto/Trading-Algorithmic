@@ -42,7 +42,7 @@ class Clustering:
 
         self.clust_labels_ = []
 
-    def dimensionality_reduction_by_components(self, num_features: int = 10):
+    def pca(self, num_features: int = 10):
         """
         Processes and scales the prices universe supplied in the constructor, into returns.
 
