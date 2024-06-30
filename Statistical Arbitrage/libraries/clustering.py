@@ -119,7 +119,7 @@ class Clustering:
         clust = OPTICS(**kwargs)
         clust.fit(self.feature_vector)
         self.clust_labels_ = clust.labels_
-        return self._generate_pairwise_combinations(self.clust_labels_)
+        return self._generate_pairwise_combinations(self.clust_labels_), clust
 
     def cluster_using_dbscan(self, **kwargs: dict) -> list:
         """
