@@ -17,9 +17,9 @@ import matplotlib.pyplot as plt
 from matplotlib.axes._axes import Axes
 from matplotlib.figure import Figure
 
-from arbitragelab.util.indexed_highlight import IndexedHighlight
+# from arbitragelab.util.indexed_highlight import IndexedHighlight
 
-class clustering:
+class Clustering:
     """
     Implementation of the Proposed Pairs Selection Framework in the following paper:
     `"A Machine Learning based Pairs Trading Investment Strategy."
@@ -98,7 +98,7 @@ class clustering:
                       for i in axes[0, 0].get_yticklabels()]
         axes[0, 0].set_yticklabels(new_labels)
 
-        return axes
+        # return axes
 
     def cluster_using_optics(self, **kwargs: dict) -> list:
         """
