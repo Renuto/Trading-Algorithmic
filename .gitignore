@@ -11,7 +11,7 @@ Thumbs.db
 *.class
 
 # Ignore specific folders
-data/stooq
+Statistical Arbitrage/data/stooq
 
 # Ignore log files
 *.log
