@@ -11,7 +11,7 @@ Thumbs.db
 *.class
 
 # Ignore specific folders
-node_modules/stooq
+data/stooq
 
 # Ignore log files
 *.log
