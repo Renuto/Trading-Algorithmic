@@ -1,0 +1,20 @@
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE configuration files
+.vscode/
+
+# Ignore compiled files
+*.o
+*.pyc
+*.class
+
+# Ignore specific folders
+node_modules/stooq
+
+# Ignore log files
+*.log
+
+# Ignore sensitive files
+.env
